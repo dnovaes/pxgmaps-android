@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/landingPageFragment">
+    <fragment
+        android:id="@+id/landingPageFragment"
+        android:name="com.dnovaes.pxgmaps.landingPage.ui.views.LandingPageFragment"
+        android:label="LandingPageFragment" >
+        <action
+            android:id="@+id/action_landingPageFragment_to_mapsListFragment"
+            app:destination="@id/mapsListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapsListFragment"
+        android:name="com.dnovaes.pxgmaps.MapsListFragment"
+        android:label="fragment_maps_list_list"
+        tools:layout="@layout/fragment_maps_list_list" />
+</navigation>

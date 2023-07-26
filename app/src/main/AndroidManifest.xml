@@ -11,11 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pxgmaps"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Pxgmaps">
+            android:theme="@style/Theme.Pxgmaps.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

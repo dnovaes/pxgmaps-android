@@ -1,11 +1,11 @@
-package com.dnovaes.pxgmaps.landingPage.viewmodels
+package com.dnovaes.pxgmaps.landingPage.ui.viewmodels
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.dnovaes.pxgmaps.landingPage.models.LandingState
-import com.dnovaes.pxgmaps.landingPage.models.LandingStateData
-import com.dnovaes.pxgmaps.landingPage.models.MenuItem
+import com.dnovaes.pxgmaps.landingPage.ui.models.LandingState
+import com.dnovaes.pxgmaps.landingPage.ui.models.LandingStateData
+import com.dnovaes.pxgmaps.landingPage.ui.models.MenuItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 

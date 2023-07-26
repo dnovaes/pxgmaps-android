@@ -1,4 +1,4 @@
-package com.dnovaes.pxgmaps.landingPage.models
+package com.dnovaes.pxgmaps.landingPage.ui.models
 
 import com.dnovaes.pxgmaps.ui.StateDataInterface
 
