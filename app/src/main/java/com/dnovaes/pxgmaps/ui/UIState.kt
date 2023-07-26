@@ -1,5 +1,8 @@
 package com.dnovaes.pxgmaps.ui
 
+import com.dnovaes.pxgmaps.ui.models.StateStatus
+import com.dnovaes.pxgmaps.ui.models.UIErrorInterface
+
 interface UIFlowStateInterface<
         P: StateProcessInterface,
         S: StateStatus,
@@ -7,6 +10,7 @@ interface UIFlowStateInterface<
     val process: P
     val status: S
     val data: D
+    val error: UIErrorInterface?
 
     fun copy(
         process: P = this.process,
@@ -27,10 +31,3 @@ interface UIFlowStateInterface<
 interface StateDataInterface
 
 interface StateProcessInterface
-
-enum class StateStatus {
-    IDLE,
-    START,
-    PROCESSING,
-    DONE
-}

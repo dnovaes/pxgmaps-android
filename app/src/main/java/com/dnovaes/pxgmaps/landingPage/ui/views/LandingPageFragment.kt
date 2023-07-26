@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.dnovaes.pxgmaps.R
 import com.dnovaes.pxgmaps.landingPage.ui.models.MenuItem
 import com.dnovaes.pxgmaps.landingPage.ui.viewmodels.LandingPageViewModel
 
@@ -68,7 +70,11 @@ class LandingPageFragment: Fragment() {
         Button(
             modifier = Modifier.padding(vertical = 8.dp),
             onClick = {
-                viewModel.userClickedOnMenuItem(i)
+                if (menuItem.numClicks == 1) {
+                    findNavController().navigate(R.id.action_landingPageFragment_to_mapsListFragment)
+                } else {
+                    viewModel.userClickedOnMenuItem(i)
+                }
             }
         ) {
             val textValue = if (menuItem.numClicks > 0) {

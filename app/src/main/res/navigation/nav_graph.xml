@@ -14,7 +14,6 @@
     </fragment>
     <fragment
         android:id="@+id/mapsListFragment"
-        android:name="com.dnovaes.pxgmaps.MapsListFragment"
-        android:label="fragment_maps_list_list"
-        tools:layout="@layout/fragment_maps_list_list" />
+        android:name="com.dnovaes.pxgmaps.mapsList.MapsListFragment"
+        android:label="fragment_maps_list" />
 </navigation>

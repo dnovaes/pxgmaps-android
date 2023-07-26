@@ -1,13 +1,15 @@
 package com.dnovaes.pxgmaps.landingPage.ui.models
 
 import com.dnovaes.pxgmaps.ui.StateProcessInterface
-import com.dnovaes.pxgmaps.ui.StateStatus
 import com.dnovaes.pxgmaps.ui.UIFlowStateInterface
+import com.dnovaes.pxgmaps.ui.models.StateStatus
+import com.dnovaes.pxgmaps.ui.models.UIErrorInterface
 
 class LandingState(
     override val process: LandingStateProcess = LandingStateProcess.RESET,
     override val status: StateStatus = StateStatus.IDLE,
-    override val data: LandingStateData = LandingStateData()
+    override val data: LandingStateData = LandingStateData(),
+    override val error: UIErrorInterface? = null
 ): UIFlowStateInterface<LandingStateProcess, StateStatus, LandingStateData> {
 
     override fun copy(
