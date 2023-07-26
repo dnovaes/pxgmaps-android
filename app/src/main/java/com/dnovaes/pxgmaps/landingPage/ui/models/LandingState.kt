@@ -47,7 +47,8 @@ class LandingState(
 }
 
 data class MenuItem(
-    val title: String
+    val title: String,
+    val numClicks: Int = 0
 )
 
 enum class LandingStateProcess: StateProcessInterface {

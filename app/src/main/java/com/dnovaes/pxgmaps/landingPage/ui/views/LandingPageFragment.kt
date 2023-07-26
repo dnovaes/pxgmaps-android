@@ -39,9 +39,7 @@ class LandingPageFragment: Fragment() {
 
     @Composable
     fun LandingPage() {
-        //val initialState = LandingState()
-        //val landingDataState by viewModel.landingData.collectAsState(initialState)
-        val landingDataState = viewModel.landingData.value
+        val landingDataState = viewModel.landingState.value
         when {
             landingDataState.isLoadMenu() -> LandingPageMenu(landingDataState.data.menuItems)
         }
@@ -70,10 +68,15 @@ class LandingPageFragment: Fragment() {
         Button(
             modifier = Modifier.padding(vertical = 8.dp),
             onClick = {
-                //viewModel.userClickedOnMenuItem(i)
+                viewModel.userClickedOnMenuItem(i)
             }
         ) {
-            Text(menuItem.title)
+            val textValue = if (menuItem.numClicks > 0) {
+                "${menuItem.title} ${menuItem.numClicks}"
+            } else {
+                menuItem.title
+            }
+            Text(textValue)
         }
     }
 }

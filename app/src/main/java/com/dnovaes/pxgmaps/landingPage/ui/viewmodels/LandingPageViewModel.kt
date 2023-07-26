@@ -6,16 +6,11 @@ import androidx.lifecycle.ViewModel
 import com.dnovaes.pxgmaps.landingPage.ui.models.LandingState
 import com.dnovaes.pxgmaps.landingPage.ui.models.LandingStateData
 import com.dnovaes.pxgmaps.landingPage.ui.models.MenuItem
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class LandingPageViewModel: ViewModel() {
-    private var landingState = LandingState()
 
-    //private val _landingData = MutableStateFlow(LandingState())
-    //val landingData: Flow<LandingState> = _landingData
-
-    val landingData: MutableState<LandingState> = mutableStateOf(landingState)
+    private var localLandingState = LandingState()
+    val landingState: MutableState<LandingState> = mutableStateOf(localLandingState)
 
     init {
         loadInitialItems()
@@ -28,9 +23,24 @@ class LandingPageViewModel: ViewModel() {
             MenuItem("Nightmare"),
         )
         val model = LandingStateData(menuItems = menuItems)
-        landingState = landingState
+        localLandingState = localLandingState
             .asLoadingMenu()
             .withData(model)
-        landingData.value = landingState
+        landingState.value = localLandingState
+    }
+
+    fun userClickedOnMenuItem(index: Int) {
+        val landingData = localLandingState.data
+        val currentMenuItems = localLandingState.data.menuItems.toMutableList()
+
+        if (currentMenuItems.isNotEmpty()) {
+            val currentMenuItem = currentMenuItems[index]
+            val newMenuItem = currentMenuItem.copy(numClicks = currentMenuItem.numClicks + 1)
+            currentMenuItems[index] = newMenuItem
+
+            localLandingState = localLandingState
+                .withData(landingData.copy(menuItems = currentMenuItems.toList()))
+            landingState.value = localLandingState
+        }
     }
 }
