@@ -1,7 +1,6 @@
 package com.dnovaes.pxgmaps.mapsList
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +12,9 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.viewModels
 import com.dnovaes.pxgmaps.landingPage.ui.components.MapCard
 import com.dnovaes.pxgmaps.mapsList.viewmodels.MapListViewModel
+import com.dnovaes.pxgmaps.ui.views.BaseFragment
 
-class MapsListFragment : Fragment() {
+class MapsListFragment : BaseFragment() {
 
     private val viewModel: MapListViewModel by viewModels()
 
@@ -34,14 +34,17 @@ class MapsListFragment : Fragment() {
     fun MapsListPage() {
         val state = viewModel.mapState.value
         when {
-            state.isLoadMaps() -> LoadMenuList(state.data.mapItems)
+            state.isProcessingLoadMaps() -> showSpinner()
+            state.isDoneLoadMap() -> {
+                LoadMenuList(state.data.mapItems)
+            }
         }
     }
 
     @Composable
     fun LoadMenuList(mapItems: List<String>) {
         LazyColumn {
-            itemsIndexed(items = mapItems) {index, item ->
+            itemsIndexed(items = mapItems) {_, item ->
                 MapCard(mapTitle = item) {
                     Toast.makeText(
                         requireContext(),

@@ -52,7 +52,7 @@ fun MapCard(
                    modifier = Modifier
                        .fillMaxWidth(0.85f)
                        .wrapContentWidth(Alignment.Start),
-                   style = MaterialTheme.typography.h4
+                   style = MaterialTheme.typography.h5
                )
             }
         }
