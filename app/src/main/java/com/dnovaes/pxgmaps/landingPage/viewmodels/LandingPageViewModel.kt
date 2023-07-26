@@ -1,5 +1,7 @@
 package com.dnovaes.pxgmaps.landingPage.viewmodels
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.dnovaes.pxgmaps.landingPage.models.LandingState
 import com.dnovaes.pxgmaps.landingPage.models.LandingStateData
@@ -8,10 +10,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class LandingPageViewModel: ViewModel() {
-    private val _landingData = MutableStateFlow(LandingState())
-    val landingData: Flow<LandingState> = _landingData
-
     private var landingState = LandingState()
+
+    //private val _landingData = MutableStateFlow(LandingState())
+    //val landingData: Flow<LandingState> = _landingData
+
+    val landingData: MutableState<LandingState> = mutableStateOf(landingState)
 
     init {
         loadInitialItems()
@@ -27,6 +31,6 @@ class LandingPageViewModel: ViewModel() {
         landingState = landingState
             .asLoadingMenu()
             .withData(model)
-        _landingData.value = landingState
+        landingData.value = landingState
     }
 }

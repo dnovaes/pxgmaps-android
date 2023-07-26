@@ -12,7 +12,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,8 +42,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun LandingPage(viewModel: LandingPageViewModel = LandingPageViewModel()) {
-    val initialState = LandingState()
-    val landingDataState by viewModel.landingData.collectAsState(initialState)
+    //val initialState = LandingState()
+    //val landingDataState by viewModel.landingData.collectAsState(initialState)
+    val landingDataState = viewModel.landingData.value
     when {
         landingDataState.isLoadMenu() -> LandingPageMenu(landingDataState.data.menuItems)
     }
@@ -73,7 +73,7 @@ fun menuButton(i: Int, menuItem: MenuItem) {
     Button(
         modifier = Modifier.padding(vertical = 8.dp),
         onClick = {
-            //doNothing
+            //viewModel.userClickedOnMenuItem(i)
         }
     ) {
         Text(menuItem.title)
