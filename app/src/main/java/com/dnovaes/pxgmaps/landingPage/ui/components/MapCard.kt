@@ -7,53 +7,68 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import com.dnovaes.pxgmaps.mapsList.models.MapItem
+import com.dnovaes.pxgmaps.utils.ImageUtils
 
 @Composable
 fun MapCard(
-    mapTitle: String,
+    item: MapItem,
     onClick: () -> Unit
 ) {
     Card(
-        shape = MaterialTheme.shapes.small,
+        shape = RoundedCornerShape(8.dp),
         modifier = Modifier
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 10.dp, vertical = 6.dp)
             .fillMaxWidth()
             .clickable(onClick = onClick)
     ) {
+        val bitmap = ImageUtils.loadBitmap(url = item.url).value
         Column {
-/*
-            Image(
-                bitmap = ,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(225.dp),
-                contentScale = ContentScale.Crop
-            )
-*/
+            bitmap?.let { loadedImage ->
+                Image(
+                    bitmap = loadedImage.asImageBitmap(),
+                    contentDescription = "a Pxg Map",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(225.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
             Row(
                 modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 8.dp,
-                    vertical = 8.dp
-                )
+                    .fillMaxWidth()
+                    .padding(
+                        top = 4.dp,
+                        bottom = 6.dp,
+                        start = 6.dp,
+                        end = 6.dp
+                    )
             ) {
                Text(
-                   text = mapTitle,
+                   text = item.title,
                    modifier = Modifier
-                       .fillMaxWidth(0.85f)
-                       .wrapContentWidth(Alignment.Start),
-                   style = MaterialTheme.typography.h5
+                       .fillMaxWidth(0.65f)
+                       .wrapContentSize(Alignment.CenterStart),
+                   style = MaterialTheme.typography.h6
                )
+                Text(
+                    text = item.coordinates,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.CenterEnd),
+                    style = MaterialTheme.typography.subtitle1
+                )
             }
         }
     }
