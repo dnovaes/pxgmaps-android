@@ -41,7 +41,7 @@ fun MapCard(
                     contentDescription = "a Pxg Map",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(225.dp),
+                        .height(180.dp),
                     contentScale = ContentScale.Crop
                 )
             }
