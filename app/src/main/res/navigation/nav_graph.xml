@@ -3,7 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/landingPageFragment">
+    app:startDestination="@id/viridianForestFragment">
+    <fragment
+        android:id="@+id/viridianForestFragment"
+        android:name="com.dnovaes.pxgmaps.viridianforest.ViridianForestFragment"
+        android:label="ViridianForestFragment" >
+    </fragment>
     <fragment
         android:id="@+id/landingPageFragment"
         android:name="com.dnovaes.pxgmaps.landingPage.ui.views.LandingPageFragment"
