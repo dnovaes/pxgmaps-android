@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Pxg Maps Explorer</string>
     <string name="walk_through">Walk Through</string>
+    <string name="play">Play</string>
 </resources>

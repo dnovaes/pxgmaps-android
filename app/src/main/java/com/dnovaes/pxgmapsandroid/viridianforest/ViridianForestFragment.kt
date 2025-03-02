@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.viewModels
-import com.dnovaes.pxgmapsandroid.landingPage.ui.models.MenuItem
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,10 +23,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.dnovaes.pxgmapsandroid.BaseFragment
 import com.dnovaes.pxgmapsandroid.R
+import com.dnovaes.pxgmapsandroid.viridianforest.models.CellInfo
+import com.dnovaes.pxgmapsandroid.viridianforest.models.GridItems
+import com.dnovaes.pxgmapsandroid.viridianforest.models.RowItem
 
 
 class ViridianForestFragment: BaseFragment() {
@@ -54,12 +58,12 @@ class ViridianForestFragment: BaseFragment() {
         when {
             dataState.isLoadMenu() ||
             dataState.isGeneratingJackpot() ->
-                ViridianForestPage(dataState.data.menuItems)
+                ViridianForestPage(dataState.data.gridItems)
         }
     }
 
     @Composable
-    fun ViridianForestPage(menuItems: List<List<MenuItem>>) {
+    fun ViridianForestPage(menuItems: GridItems) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -80,17 +84,21 @@ class ViridianForestFragment: BaseFragment() {
 
             items.forEach { rowItems ->
                 Row(
-                    modifier = Modifier.padding(4.dp),
+                    modifier = Modifier.padding(2.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     rowItems.forEach { item ->
                         Box(
                             modifier = Modifier
-                                .padding(4.dp)
+                                .padding(2.dp)
                                 .size(80.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = "Item $item")
+                            Image(
+                                painter = painterResource(id = R.drawable.cell_mimikyu),
+                                contentDescription = "cell_image",
+                                modifier = Modifier.size(80.dp)
+                            )
                         }
                     }
                 }
@@ -106,8 +114,8 @@ class ViridianForestFragment: BaseFragment() {
 
 
     @Composable
-    fun JackpotGrid(menuItemsData: List<List<MenuItem>>) {
-        menuItemsData.forEach { rowItems ->
+    fun JackpotGrid(menuItemsData: GridItems) {
+        menuItemsData.rows.forEach{ rowItems ->
             JackpotGridRows(rowItems)
         }
 
@@ -117,26 +125,31 @@ class ViridianForestFragment: BaseFragment() {
     }
 
     @Composable
-    fun JackpotGridRows(rowItems: List<MenuItem>) {
+    fun JackpotGridRows(rowItem: RowItem) {
         Row(
-            modifier = Modifier.padding(4.dp),
+            modifier = Modifier.padding(2.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            rowItems.forEachIndexed { i, item ->
+            rowItem.cells.forEachIndexed { i, item ->
                 cellInfo(i = i, item = item)
             }
         }
     }
 
     @Composable
-    fun cellInfo(i: Int, item: MenuItem) {
+    fun cellInfo(i: Int, item: CellInfo) {
+        val cellSize = 60.dp
         Box(
             modifier = Modifier
-                .padding(4.dp)
-                .size(80.dp),
+                .padding(2.dp)
+                .size(cellSize),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = item.title)
+            Image(
+                painter = painterResource(id = item.pokeCell.image),
+                contentDescription = "cell_image_${item.id}",
+                modifier = Modifier.size(cellSize)
+            )
         }
     }
 
@@ -150,7 +163,7 @@ class ViridianForestFragment: BaseFragment() {
                 viewModel.userRequestedPlay()
             }
         ) {
-            Text(stringResource(R.string.walk_through))
+            Text(stringResource(R.string.play))
         }
     }
 }
