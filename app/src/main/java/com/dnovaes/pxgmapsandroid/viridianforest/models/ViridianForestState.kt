@@ -56,14 +56,36 @@ class ViridianForestState(
         .withProcess(ViridianForestStateProcess.GENERATE_JACKPOT)
         .withState(StateStatus.PROCESSING)
 
-    fun isGeneratingJackpot() = isGenerateJackpot() &&
+    fun asGeneratedJackpot(): ViridianForestState = this
+        .withProcess(ViridianForestStateProcess.GENERATE_JACKPOT)
+        .withState(StateStatus.DONE)
+
+    fun isProcessingGenerateJackpot() = isGenerateJackpot() &&
             status == StateStatus.PROCESSING
 
+    fun isDoneGenerateJackpot() = isGenerateJackpot() &&
+            status == StateStatus.DONE
+
     //endregion
+
+    //region CalculateMatches
+
+    private fun isCalculateMatches() = (process == ViridianForestStateProcess.CALCULATE_MATCHES)
+
+    fun asDoneCalculateMatches(): ViridianForestState = this
+        .withProcess(ViridianForestStateProcess.CALCULATE_MATCHES)
+        .withState(StateStatus.DONE)
+
+    fun isDoneCalculateMatches() = isCalculateMatches() &&
+            status == StateStatus.DONE
+
+    //endregion
+
 }
 
 enum class ViridianForestStateProcess: StateProcessInterface {
     RESET,
     LOADING_MENU,
-    GENERATE_JACKPOT
+    GENERATE_JACKPOT,
+    CALCULATE_MATCHES
 }

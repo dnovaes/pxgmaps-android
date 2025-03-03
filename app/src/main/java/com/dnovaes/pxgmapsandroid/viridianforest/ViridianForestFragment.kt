@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,14 +27,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import com.dnovaes.pxgmapsandroid.BaseFragment
 import com.dnovaes.pxgmapsandroid.R
+import com.dnovaes.pxgmapsandroid.common.hasMatchWithPos
+import com.dnovaes.pxgmapsandroid.common.model.PokeCell
 import com.dnovaes.pxgmapsandroid.viridianforest.models.CellInfo
 import com.dnovaes.pxgmapsandroid.viridianforest.models.GridItems
+import com.dnovaes.pxgmapsandroid.viridianforest.models.ItemMatch
 import com.dnovaes.pxgmapsandroid.viridianforest.models.RowItem
+import com.dnovaes.pxgmapsandroid.viridianforest.models.ViridianForestState
+import com.dnovaes.pxgmapsandroid.viridianforest.models.ViridianForestStateData
+import kotlinx.coroutines.delay
 
 
 class ViridianForestFragment: BaseFragment() {
@@ -54,69 +72,40 @@ class ViridianForestFragment: BaseFragment() {
 
     @Composable
     fun LandingPage() {
-        val dataState = viewModel.landingState.value
+        val state = viewModel.gameState.value
         when {
-            dataState.isLoadMenu() ||
-            dataState.isGeneratingJackpot() ->
-                ViridianForestPage(dataState.data.gridItems)
+            state.isGenerateJackpot() ||
+            state.isDoneCalculateMatches() ->
+                ViridianForestPage(state)
         }
     }
 
     @Composable
-    fun ViridianForestPage(menuItems: GridItems) {
+    fun ViridianForestPage(state: ViridianForestState) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            JackpotGrid(menuItems)
-        }
-    }
-
-    @Composable
-    fun GridExample() {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val items = (1..9).chunked(3) // Splitting into groups of 3 to form rows
-
-            items.forEach { rowItems ->
-                Row(
-                    modifier = Modifier.padding(2.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    rowItems.forEach { item ->
-                        Box(
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .size(80.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.cell_mimikyu),
-                                contentDescription = "cell_image",
-                                modifier = Modifier.size(80.dp)
-                            )
-                        }
-                    }
-                }
-            }
+            JackpotGrid(state)
         }
     }
 
     @Preview(showBackground = true)
     @Composable
     fun PreviewGridExample() {
-        GridExample()
+        val mockedGridItems = ViridianForestViewModel.mockedGridItems
+        val data = ViridianForestStateData(gridItems = mockedGridItems)
+        val state = ViridianForestState(data = data)
+        ViridianForestPage(state)
     }
 
 
     @Composable
-    fun JackpotGrid(menuItemsData: GridItems) {
-        menuItemsData.rows.forEach{ rowItems ->
-            JackpotGridRows(rowItems)
+    fun JackpotGrid(state: ViridianForestState) {
+        val dataState = state.data
+        dataState.gridItems.rows.forEachIndexed { rowPos, rowItem ->
+            JackpotGridRows(rowPos, rowItem, dataState.rowMatches)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -125,20 +114,77 @@ class ViridianForestFragment: BaseFragment() {
     }
 
     @Composable
-    fun JackpotGridRows(rowItem: RowItem) {
+    fun JackpotGridRows(
+        rowPos: Int,
+        rowItem: RowItem,
+        matches: List<ItemMatch>
+    ) {
         Row(
             modifier = Modifier.padding(2.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            rowItem.cells.forEachIndexed { i, item ->
-                cellInfo(i = i, item = item)
+            rowItem.cells.forEachIndexed { columnPos, item ->
+                cellInfo(
+                    columnPos = columnPos,
+                    item = item,
+                    isMatch = matches.hasMatchWithPos(rowPos, columnPos)
+                )
             }
         }
     }
 
     @Composable
-    fun cellInfo(i: Int, item: CellInfo) {
+    fun cellInfo(
+        columnPos: Int,
+        item: CellInfo,
+        isMatch: Boolean
+    ) {
         val cellSize = 60.dp
+
+        val gameState = viewModel.gameState.value
+
+        if (gameState.isDoneGenerateJackpot()) {
+            FirstAppearanceImageBox(cellSize, item)
+        } else if(
+            gameState.isDoneCalculateMatches()
+        ) {
+            if (isMatch) {
+                BlinkableImageBox(cellSize, item)
+            } else {
+                StaticImageBox(
+                    cellSize = cellSize,
+                    item = item,
+                    alpha = 1f
+                )
+            }
+        } else {
+            EmptyImageBox(cellSize, item)
+        }
+
+    }
+
+    @Composable
+    fun FirstAppearanceImageBox(
+        cellSize: Dp,
+        item: CellInfo
+    ) {
+        val shouldAnimate by viewModel.shouldAnimate
+
+        val translationY by animateFloatAsState(
+            targetValue = if (shouldAnimate) 0f else -300f, // Move from -300f (off-screen) to 0f
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioHighBouncy,
+                stiffness = Spring.StiffnessMedium
+            ),
+            label = "spring spec"
+        )
+
+        val alpha by animateFloatAsState(
+            targetValue = if (shouldAnimate) 1f else 0f, // Fade in
+            animationSpec = tween(durationMillis = 500), // Smooth fade in
+            label = "alpha animation"
+        )
+
         Box(
             modifier = Modifier
                 .padding(2.dp)
@@ -147,8 +193,88 @@ class ViridianForestFragment: BaseFragment() {
         ) {
             Image(
                 painter = painterResource(id = item.pokeCell.image),
-                contentDescription = "cell_image_${item.id}",
-                modifier = Modifier.size(cellSize)
+                contentDescription = "cell_image_${item.pokeCell.id}",
+                modifier = Modifier
+                    .size(cellSize)
+                    .size(200.dp)
+                    .graphicsLayer(
+                        translationY = translationY,
+                        alpha = alpha
+                    )
+            )
+        }
+    }
+
+    @Composable
+    fun EmptyImageBox(
+        cellSize: Dp,
+        item: CellInfo
+    ) {
+        StaticImageBox(
+            cellSize = cellSize,
+            item = item,
+            alpha = 0f,
+        )
+    }
+
+    @Composable
+    fun BlinkableImageBox(
+        cellSize: Dp,
+        item: CellInfo
+    ) {
+        var isVisible by remember { mutableStateOf(true) } // Track visibility
+
+        val alpha by animateFloatAsState(
+            targetValue = if (isVisible) 1f else 0f, // Fade in & out
+            animationSpec = tween(durationMillis = 400),
+            label = "blink animation"
+        )
+
+        LaunchedEffect(4) {
+            repeat(4) { // Blink 4 times
+                isVisible = false
+                delay(200)
+                isVisible = true
+                delay(200)
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .padding(2.dp)
+                .size(cellSize),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = item.pokeCell.image),
+                contentDescription = "cell_image_${item.pokeCell.id}",
+                modifier = Modifier
+                    .size(cellSize)
+                    .size(200.dp)
+                    .graphicsLayer(alpha = alpha)
+            )
+        }
+    }
+
+    @Composable
+    fun StaticImageBox(
+        cellSize: Dp,
+        item: CellInfo,
+        alpha: Float
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(2.dp)
+                .size(cellSize),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = item.pokeCell.image),
+                contentDescription = "cell_image_${item.pokeCell.id}",
+                modifier = Modifier
+                    .size(cellSize)
+                    .size(200.dp)
+                    .alpha(alpha)
             )
         }
     }
