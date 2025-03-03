@@ -110,7 +110,9 @@ class ViridianForestFragment: BaseFragment() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        JackpotButton()
+        JackpotButton(
+            isEnabled = state.isIdleGenerateJackpot()
+        )
     }
 
     @Composable
@@ -146,7 +148,8 @@ class ViridianForestFragment: BaseFragment() {
         if (gameState.isDoneGenerateJackpot()) {
             FirstAppearanceImageBox(cellSize, item)
         } else if(
-            gameState.isDoneCalculateMatches()
+            gameState.isDoneCalculateMatches() ||
+            gameState.isIdleGenerateJackpot()
         ) {
             if (isMatch) {
                 BlinkableImageBox(cellSize, item)
@@ -280,14 +283,17 @@ class ViridianForestFragment: BaseFragment() {
     }
 
     @Composable
-    fun JackpotButton() {
+    fun JackpotButton(
+        isEnabled: Boolean
+    ) {
         Button(
             modifier = Modifier
                 .width(160.dp)
                 .height(40.dp),
             onClick = {
                 viewModel.userRequestedPlay()
-            }
+            },
+            enabled = isEnabled,
         ) {
             Text(stringResource(R.string.play))
         }

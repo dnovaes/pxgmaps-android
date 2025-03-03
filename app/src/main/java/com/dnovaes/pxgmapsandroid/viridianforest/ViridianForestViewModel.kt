@@ -100,6 +100,7 @@ class ViridianForestViewModel: ViewModel() {
             .withData(model)
         gameState.value = localGameState
         animate()
+        postIdleState()
     }
 
     fun userRequestedPlay() {
@@ -119,6 +120,8 @@ class ViridianForestViewModel: ViewModel() {
             animate()
             delay(400)
             calculateMatches(model.gridItems)
+            delay(500)
+            postIdleState()
         }
     }
 
@@ -127,6 +130,12 @@ class ViridianForestViewModel: ViewModel() {
             delay(200) // Small delay to allow recomposition
             shouldAnimate.value = true // Re-trigger animation
         }
+    }
+
+    private fun postIdleState() {
+        localGameState = localGameState
+            .asIdleJackpot()
+        gameState.value = localGameState
     }
 
     private fun calculateMatches(

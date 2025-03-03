@@ -32,25 +32,13 @@ class ViridianForestState(
         return super.withData(data) as ViridianForestState
     }
 
-    //region LoadingMenu
-
-    fun isLoadMenu() = (process == ViridianForestStateProcess.LOADING_MENU)
-
-    fun isProcessingLoadMenu() = isLoadMenu() &&
-            status == StateStatus.PROCESSING
-
-    fun isDoneLoadMenu() = isLoadMenu() &&
-            status == StateStatus.DONE
-
-    fun asLoadingMenu(): ViridianForestState = this
-        .withProcess(ViridianForestStateProcess.LOADING_MENU)
-        .withState(StateStatus.PROCESSING) as ViridianForestState
-
-    //endregion
-
     //region Play
 
     fun isGenerateJackpot() = (process == ViridianForestStateProcess.GENERATE_JACKPOT)
+
+    fun asIdleJackpot(): ViridianForestState = this
+        .withProcess(ViridianForestStateProcess.GENERATE_JACKPOT)
+        .withState(StateStatus.IDLE)
 
     fun asGeneratingJackpot(): ViridianForestState = this
         .withProcess(ViridianForestStateProcess.GENERATE_JACKPOT)
@@ -59,6 +47,9 @@ class ViridianForestState(
     fun asGeneratedJackpot(): ViridianForestState = this
         .withProcess(ViridianForestStateProcess.GENERATE_JACKPOT)
         .withState(StateStatus.DONE)
+
+    fun isIdleGenerateJackpot() = isGenerateJackpot() &&
+            status == StateStatus.IDLE
 
     fun isProcessingGenerateJackpot() = isGenerateJackpot() &&
             status == StateStatus.PROCESSING
@@ -85,7 +76,6 @@ class ViridianForestState(
 
 enum class ViridianForestStateProcess: StateProcessInterface {
     RESET,
-    LOADING_MENU,
     GENERATE_JACKPOT,
     CALCULATE_MATCHES
 }
