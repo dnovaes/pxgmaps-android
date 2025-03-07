@@ -33,7 +33,7 @@ data class GridItems(
 }
 
 data class RowItem(
-    val cells: List<CellInfo>
+    val cells: List<PokeCell>
 ) {
 
     fun getMatch(minMatchCount: Int, rowSize: Int): ResultMatch? {
@@ -44,7 +44,7 @@ data class RowItem(
         var rightMostPos: Int = -1
 
         while (i < rowSize - 1) {
-            if (cells[i].pokeCell.id == cells [i+1].pokeCell.id) {
+            if (cells[i].id == cells[i+1].id) {
                 countMatches ++
 
                 if (countMatches >= minMatchCount) {
@@ -68,8 +68,8 @@ data class RowItem(
     }
 }
 
-data class CellInfo(
-    val pokeCell: PokeCell,
+data class ColumnItem(
+    val cells: List<PokeCell>
 )
 
 data class ItemMatch(

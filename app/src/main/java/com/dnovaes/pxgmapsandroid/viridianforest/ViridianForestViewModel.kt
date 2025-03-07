@@ -28,39 +28,39 @@ class ViridianForestViewModel: ViewModel() {
         val mockedGridItems = GridItems(
             rows = listOf(
                 RowItem(cells = listOf(
-                    CellInfo(PokeCell.enumValue("1")),
-                    CellInfo(PokeCell.enumValue("2")),
-                    CellInfo(PokeCell.enumValue("3")),
-                    CellInfo(PokeCell.enumValue("2")),
-                    CellInfo(PokeCell.enumValue("1")),
+                    PokeCell.enumValue("1"),
+                    PokeCell.enumValue("2"),
+                    PokeCell.enumValue("3"),
+                    PokeCell.enumValue("2"),
+                    PokeCell.enumValue("1"),
                 )),
                 RowItem(cells = listOf(
-                    CellInfo(PokeCell.enumValue("5")),
-                    CellInfo(PokeCell.enumValue("6")),
-                    CellInfo(PokeCell.enumValue("6")),
-                    CellInfo(PokeCell.enumValue("6")),
-                    CellInfo(PokeCell.enumValue("4")),
+                    PokeCell.enumValue("5"),
+                    PokeCell.enumValue("6"),
+                    PokeCell.enumValue("6"),
+                    PokeCell.enumValue("6"),
+                    PokeCell.enumValue("4"),
                 )),
                 RowItem(cells = listOf(
-                    CellInfo(PokeCell.enumValue("7")),
-                    CellInfo(PokeCell.enumValue("8")),
-                    CellInfo(PokeCell.enumValue("7")),
-                    CellInfo(PokeCell.enumValue("8")),
-                    CellInfo(PokeCell.enumValue("9")),
+                    PokeCell.enumValue("7"),
+                    PokeCell.enumValue("8"),
+                    PokeCell.enumValue("7"),
+                    PokeCell.enumValue("8"),
+                    PokeCell.enumValue("9"),
                 )),
                 RowItem(cells = listOf(
-                    CellInfo(PokeCell.enumValue("7")),
-                    CellInfo(PokeCell.enumValue("8")),
-                    CellInfo(PokeCell.enumValue("7")),
-                    CellInfo(PokeCell.enumValue("8")),
-                    CellInfo(PokeCell.enumValue("9")),
+                    PokeCell.enumValue("7"),
+                    PokeCell.enumValue("8"),
+                    PokeCell.enumValue("7"),
+                    PokeCell.enumValue("8"),
+                    PokeCell.enumValue("9"),
                 )),
                 RowItem(cells = listOf(
-                    CellInfo(PokeCell.enumValue("7")),
-                    CellInfo(PokeCell.enumValue("8")),
-                    CellInfo(PokeCell.enumValue("7")),
-                    CellInfo(PokeCell.enumValue("8")),
-                    CellInfo(PokeCell.enumValue("9")),
+                    PokeCell.enumValue("7"),
+                    PokeCell.enumValue("8"),
+                    PokeCell.enumValue("7"),
+                    PokeCell.enumValue("8"),
+                    PokeCell.enumValue("9"),
                 )),
             )
         )
@@ -74,16 +74,20 @@ class ViridianForestViewModel: ViewModel() {
         rowQty: Int,
         columnQty: Int
     ): GridItems {
-        val rowItems = mutableListOf<RowItem>()
+        val itemsByRow = mutableListOf<RowItem>()
+        val itemsByColumn: MutableList<MutableList<PokeCell>> =
+            mutableListOf(mutableListOf<PokeCell>())
         for (i in 1 .. rowQty) {
-            val cells = mutableListOf<CellInfo>()
+            val cells = mutableListOf<PokeCell>()
             for (j in 1 .. columnQty) {
                 val id = generateNumber()
-                cells.add(CellInfo(PokeCell.enumValue("$id")))
+                val pokeCell = PokeCell.enumValue("$id")
+                cells.add(pokeCell)
+                //itemsByColumn[j].add())
             }
-            rowItems.add(RowItem(cells.toList()))
+            itemsByRow.add(RowItem(cells.toList()))
         }
-        return GridItems(rows = rowItems.toList())
+        return GridItems(rows = itemsByRow.toList())
     }
 
 

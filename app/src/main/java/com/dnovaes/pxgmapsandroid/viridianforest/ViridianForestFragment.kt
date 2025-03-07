@@ -42,8 +42,6 @@ import com.dnovaes.pxgmapsandroid.BaseFragment
 import com.dnovaes.pxgmapsandroid.R
 import com.dnovaes.pxgmapsandroid.common.hasMatchWithPos
 import com.dnovaes.pxgmapsandroid.common.model.PokeCell
-import com.dnovaes.pxgmapsandroid.viridianforest.models.CellInfo
-import com.dnovaes.pxgmapsandroid.viridianforest.models.GridItems
 import com.dnovaes.pxgmapsandroid.viridianforest.models.ItemMatch
 import com.dnovaes.pxgmapsandroid.viridianforest.models.RowItem
 import com.dnovaes.pxgmapsandroid.viridianforest.models.ViridianForestState
@@ -138,7 +136,7 @@ class ViridianForestFragment: BaseFragment() {
     @Composable
     fun cellInfo(
         columnPos: Int,
-        item: CellInfo,
+        item: PokeCell,
         isMatch: Boolean
     ) {
         val cellSize = 60.dp
@@ -169,7 +167,7 @@ class ViridianForestFragment: BaseFragment() {
     @Composable
     fun FirstAppearanceImageBox(
         cellSize: Dp,
-        item: CellInfo
+        item: PokeCell
     ) {
         val shouldAnimate by viewModel.shouldAnimate
 
@@ -195,8 +193,8 @@ class ViridianForestFragment: BaseFragment() {
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = item.pokeCell.image),
-                contentDescription = "cell_image_${item.pokeCell.id}",
+                painter = painterResource(id = item.image),
+                contentDescription = "cell_image_${item.id}",
                 modifier = Modifier
                     .size(cellSize)
                     .size(200.dp)
@@ -211,7 +209,7 @@ class ViridianForestFragment: BaseFragment() {
     @Composable
     fun EmptyImageBox(
         cellSize: Dp,
-        item: CellInfo
+        item: PokeCell
     ) {
         StaticImageBox(
             cellSize = cellSize,
@@ -223,7 +221,7 @@ class ViridianForestFragment: BaseFragment() {
     @Composable
     fun BlinkableImageBox(
         cellSize: Dp,
-        item: CellInfo
+        item: PokeCell
     ) {
         var isVisible by remember { mutableStateOf(true) } // Track visibility
 
@@ -249,8 +247,8 @@ class ViridianForestFragment: BaseFragment() {
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = item.pokeCell.image),
-                contentDescription = "cell_image_${item.pokeCell.id}",
+                painter = painterResource(id = item.image),
+                contentDescription = "cell_image_${item.id}",
                 modifier = Modifier
                     .size(cellSize)
                     .size(200.dp)
@@ -262,7 +260,7 @@ class ViridianForestFragment: BaseFragment() {
     @Composable
     fun StaticImageBox(
         cellSize: Dp,
-        item: CellInfo,
+        item: PokeCell,
         alpha: Float
     ) {
         Box(
@@ -272,8 +270,8 @@ class ViridianForestFragment: BaseFragment() {
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = item.pokeCell.image),
-                contentDescription = "cell_image_${item.pokeCell.id}",
+                painter = painterResource(id = item.image),
+                contentDescription = "cell_image_${item.id}",
                 modifier = Modifier
                     .size(cellSize)
                     .size(200.dp)
