@@ -4,6 +4,7 @@ gen/
 out/
 
 build/
+release/
 
 # Ignoring local.properties
 local.properties
