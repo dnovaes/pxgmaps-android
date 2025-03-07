@@ -43,7 +43,6 @@ import com.dnovaes.pxgmapsandroid.R
 import com.dnovaes.pxgmapsandroid.common.hasMatchWithPos
 import com.dnovaes.pxgmapsandroid.common.model.PokeCell
 import com.dnovaes.pxgmapsandroid.viridianforest.models.ItemMatch
-import com.dnovaes.pxgmapsandroid.viridianforest.models.RowItem
 import com.dnovaes.pxgmapsandroid.viridianforest.models.ViridianForestState
 import com.dnovaes.pxgmapsandroid.viridianforest.models.ViridianForestStateData
 import kotlinx.coroutines.delay
@@ -102,7 +101,7 @@ class ViridianForestFragment: BaseFragment() {
     @Composable
     fun JackpotGrid(state: ViridianForestState) {
         val dataState = state.data
-        dataState.gridItems.rows.forEachIndexed { rowPos, rowItem ->
+        dataState.gridItems.cellsGrid.forEachIndexed { rowPos, rowItem ->
             JackpotGridRows(rowPos, rowItem, dataState.rowMatches)
         }
 
@@ -116,15 +115,15 @@ class ViridianForestFragment: BaseFragment() {
     @Composable
     fun JackpotGridRows(
         rowPos: Int,
-        rowItem: RowItem,
+        rowItem: List<PokeCell>,
         matches: List<ItemMatch>
     ) {
         Row(
             modifier = Modifier.padding(2.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            rowItem.cells.forEachIndexed { columnPos, item ->
-                cellInfo(
+            rowItem.forEachIndexed { columnPos, item ->
+                CellBox(
                     columnPos = columnPos,
                     item = item,
                     isMatch = matches.hasMatchWithPos(rowPos, columnPos)
@@ -134,7 +133,7 @@ class ViridianForestFragment: BaseFragment() {
     }
 
     @Composable
-    fun cellInfo(
+    fun CellBox(
         columnPos: Int,
         item: PokeCell,
         isMatch: Boolean

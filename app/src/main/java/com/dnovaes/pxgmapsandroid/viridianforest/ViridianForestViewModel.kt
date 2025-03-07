@@ -5,9 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dnovaes.pxgmapsandroid.common.model.PokeCell
-import com.dnovaes.pxgmapsandroid.viridianforest.models.CellInfo
 import com.dnovaes.pxgmapsandroid.viridianforest.models.GridItems
-import com.dnovaes.pxgmapsandroid.viridianforest.models.RowItem
+import com.dnovaes.pxgmapsandroid.viridianforest.models.Row
 import com.dnovaes.pxgmapsandroid.viridianforest.models.ViridianForestState
 import com.dnovaes.pxgmapsandroid.viridianforest.models.ViridianForestStateData
 import kotlinx.coroutines.Dispatchers
@@ -26,42 +25,42 @@ class ViridianForestViewModel: ViewModel() {
 
     companion object {
         val mockedGridItems = GridItems(
-            rows = listOf(
-                RowItem(cells = listOf(
+            cellsGrid = listOf(
+                listOf(
                     PokeCell.enumValue("1"),
                     PokeCell.enumValue("2"),
                     PokeCell.enumValue("3"),
                     PokeCell.enumValue("2"),
                     PokeCell.enumValue("1"),
-                )),
-                RowItem(cells = listOf(
+                ),
+                listOf(
                     PokeCell.enumValue("5"),
                     PokeCell.enumValue("6"),
                     PokeCell.enumValue("6"),
                     PokeCell.enumValue("6"),
                     PokeCell.enumValue("4"),
-                )),
-                RowItem(cells = listOf(
+                ),
+                listOf(
                     PokeCell.enumValue("7"),
                     PokeCell.enumValue("8"),
                     PokeCell.enumValue("7"),
                     PokeCell.enumValue("8"),
                     PokeCell.enumValue("9"),
-                )),
-                RowItem(cells = listOf(
+                ),
+                listOf(
                     PokeCell.enumValue("7"),
                     PokeCell.enumValue("8"),
                     PokeCell.enumValue("7"),
                     PokeCell.enumValue("8"),
                     PokeCell.enumValue("9"),
-                )),
-                RowItem(cells = listOf(
+                ),
+                listOf(
                     PokeCell.enumValue("7"),
                     PokeCell.enumValue("8"),
                     PokeCell.enumValue("7"),
                     PokeCell.enumValue("8"),
                     PokeCell.enumValue("9"),
-                )),
+                ),
             )
         )
     }
@@ -74,20 +73,21 @@ class ViridianForestViewModel: ViewModel() {
         rowQty: Int,
         columnQty: Int
     ): GridItems {
-        val itemsByRow = mutableListOf<RowItem>()
-        val itemsByColumn: MutableList<MutableList<PokeCell>> =
-            mutableListOf(mutableListOf<PokeCell>())
+
+        val cellsGrid: MutableList<MutableList<PokeCell>> = mutableListOf()
+        val rows = mutableListOf<Row>()
         for (i in 1 .. rowQty) {
-            val cells = mutableListOf<PokeCell>()
+            val rowCells = mutableListOf<PokeCell>()
             for (j in 1 .. columnQty) {
                 val id = generateNumber()
                 val pokeCell = PokeCell.enumValue("$id")
-                cells.add(pokeCell)
-                //itemsByColumn[j].add())
+                rowCells.add(pokeCell)
             }
-            itemsByRow.add(RowItem(cells.toList()))
+            rows.add(Row(rowCells.toList()))
+            cellsGrid.add(rowCells)
         }
-        return GridItems(rows = itemsByRow.toList())
+
+        return GridItems(cellsGrid = cellsGrid)
     }
 
 
@@ -146,7 +146,7 @@ class ViridianForestViewModel: ViewModel() {
         gridItems: GridItems
     ) {
         val model = localGameState.data
-        val newModel = model.copy(rowMatches = gridItems.getRowMatches())
+        val newModel = model.copy(rowMatches = gridItems.getCellMatches())
 
         localGameState = localGameState
             .asDoneCalculateMatches()

@@ -1,74 +1,32 @@
 package com.dnovaes.pxgmapsandroid.viridianforest.models
 
+import com.dnovaes.pxgmapsandroid.common.getColumnsMatches
+import com.dnovaes.pxgmapsandroid.common.getRowsMatches
 import com.dnovaes.pxgmapsandroid.common.model.PokeCell
 import com.dnovaes.pxgmapsandroid.ui.StateDataInterface
 
 data class ViridianForestStateData(
-    val gridItems: GridItems = GridItems(listOf()),
+    val gridItems: GridItems = GridItems(),
     val rowMatches: List<ItemMatch> = emptyList()
 ): StateDataInterface
 
 data class GridItems(
-    val rows: List<RowItem>
+    val cellsGrid: List<List<PokeCell>> = listOf()
 ) {
-    fun isEmpty() = rows.isEmpty()
+    fun isEmpty() = cellsGrid.isEmpty()
 
-    fun getRowMatches(): List<ItemMatch> {
-        val rowMatches = mutableListOf<ItemMatch>()
-        rows.forEachIndexed { rowPos, row ->
-            row.getMatch(minMatchCount = 2, rows.size)?.let { match ->
-                val initPos = match.rightMostPosition - match.numMatches
-                for (columnPos in initPos .. match.rightMostPosition) {
-                    rowMatches.add(
-                        ItemMatch(
-                            rowPos = rowPos,
-                            columnPos = columnPos
-                        )
-                    )
-                }
-            }
-        }
-        return rowMatches
+    fun getCellMatches(): List<ItemMatch> {
+        val matches = mutableListOf<ItemMatch>()
+        val rowMatches = cellsGrid.getRowsMatches()
+        val columnMatches = cellsGrid.getColumnsMatches()
+        matches.addAll(rowMatches)
+        matches.addAll(columnMatches)
+
+        return matches
     }
 }
 
-data class RowItem(
-    val cells: List<PokeCell>
-) {
-
-    fun getMatch(minMatchCount: Int, rowSize: Int): ResultMatch? {
-        // minMatchCount = 2
-        // 2 successful matches between before and next equivalent to 3 in total
-        var i = 0
-        var countMatches = 0
-        var rightMostPos: Int = -1
-
-        while (i < rowSize - 1) {
-            if (cells[i].id == cells[i+1].id) {
-                countMatches ++
-
-                if (countMatches >= minMatchCount) {
-                    rightMostPos = i + 1
-                }
-            } else {
-                if (countMatches >= minMatchCount) {
-                    rightMostPos = i
-                    break
-                }
-                countMatches = 0
-            }
-            i++
-        }
-
-        return if (rightMostPos > -1) {
-            ResultMatch(rightMostPos, countMatches)
-        } else {
-            null
-        }
-    }
-}
-
-data class ColumnItem(
+data class Row(
     val cells: List<PokeCell>
 )
 
@@ -78,6 +36,6 @@ data class ItemMatch(
 )
 
 data class ResultMatch(
-    val rightMostPosition: Int,
+    val outerMostPosition: Int,
     val numMatches: Int
 )
