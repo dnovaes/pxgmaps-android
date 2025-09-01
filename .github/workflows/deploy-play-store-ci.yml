@@ -3,11 +3,12 @@ name: Build & Deploy to Google PlayStore
 on:
   workflow_dispatch:
 
+env:
+  VERSION_CODE: ${{ secrets.VERSION_CODE }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      VERSION_CODE: ${{ secrets.VERSION_CODE }}
 
     steps:
     - uses: actions/checkout@v4
@@ -21,7 +22,7 @@ jobs:
 
     - name: Grant 'execute' permission for gradlew
       run: |
-        chmod +x gradlew \
+        chmod +x gradlew
         echo "VERSION_CODE=$VERSION_CODE"
 
     - name: Build with Gradle
