@@ -6,6 +6,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VERSION_CODE: ${{ secrets.VERSION_CODE }}
 
     steps:
     - uses: actions/checkout@v4
@@ -18,7 +20,9 @@ jobs:
         cache: gradle
 
     - name: Grant 'execute' permission for gradlew
-      run: chmod +x gradlew
+      run: |
+        chmod +x gradlew \
+        echo "VERSION_CODE=$VERSION_CODE"
 
     - name: Build with Gradle
       run: ./gradlew build
@@ -54,7 +58,7 @@ jobs:
       id: update_version_code
       if: success()
       run: |
-        VERSION_CODE=$(( $(grep versionCode app/build.gradle | awk '{print $2}') + 1 ))
+        VERSION_CODE=$VERSION_CODE + 1
         sed -i "s/versionCode [0-9]\+/versionCode $VERSION_CODE/" app/build.gradle
         echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
         echo "Updated versionCode to $VERSION_CODE" 
