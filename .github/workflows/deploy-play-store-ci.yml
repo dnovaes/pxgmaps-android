@@ -52,3 +52,24 @@ jobs:
         track: production
         whatsNewDirectory: whatsnew/
 
+    - name: Updates version code
+      id: update_version_code
+      if: success()
+      run: |
+        VERSION_CODE=$(( $(grep versionCode app/build.gradle | awk '{print $2}') + 1 ))
+        sed -i "s/versionCode [0-9]\+/versionCode $VERSION_CODE/" app/build.gradle
+        echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+        echo "Updated versionCode to $VERSION_CODE" 
+
+    - name: Update repository variable VERSION_CODE
+      if: success()
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPO: ${{ github.repository }}
+        VERSION_CODE: ${{ steps.update_version_code.outputs.version_code }}
+      run: |
+        curl -X PATCH \
+          -H "Authorization: Bearer $GH_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          https://api.github.com/repos/$REPO/actions/variables/VERSION_CODE \
+          -d "{\"value\":\"$VERSION_CODE\"}"
