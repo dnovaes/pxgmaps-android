@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  VERSION_CODE: ${{ secrets.VERSION_CODE }}
+  VERSION_CODE: ${{ vars.VERSION_CODE }}
 
 jobs:
   build:
