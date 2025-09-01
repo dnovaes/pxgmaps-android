@@ -58,15 +58,14 @@ jobs:
     - name: Update repository variable VERSION_CODE
       if: success()
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GHA_REPO_VAR_TOKEN: ${{ secrets.GHA_REPO_VAR_TOKEN }}
         REPO: ${{ github.repository }}
-        VERSION_CODE: ${{ steps.update_version_code.outputs.version_code }}
       run: |
-        VERSION_CODE=$VERSION_CODE + 1
+        VERSION_CODE=$((VERSION_CODE + 1))
         echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
-        echo "Updated versionCode to $VERSION_CODE" 
+        echo "Updating versionCode to $VERSION_CODE" 
         curl -X PATCH \
-          -H "Authorization: Bearer $GH_TOKEN" \
+          -H "Authorization: Bearer $GHA_REPO_VAR_TOKEN" \
           -H "Accept: application/vnd.github+json" \
-          https://api.github.com/repos/$REPO/actions/variables/VERSION_CODE \
-          -d "{\"value\":\"$VERSION_CODE\"}"
+          https://api.github.com/repos/dnovaes/pxgmaps-android/actions/variables/VERSION_CODE \
+          -d "{\"name\":\"VERSION_CODE\", \"value\":\"$VERSION_CODE\"}"
